@@ -37,6 +37,8 @@ After pondering on this for some time, I considered that perhaps, since the doc 
 The first thing I had to do was understand more about these white spaces. To do this, you can run the following and get this output:
 
 od -An -c -t u1 test.txt
+
+
    <   1   4   >   1   	2   0   1   6   -   1   2   -   2   5
   60  49  52  62  49  32  50  48  49  54  45  49  50  45  50  53
    T   0   9   :   0   3   :   5   2   .   7   5   4   6   4   6
