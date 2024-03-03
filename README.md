@@ -10,6 +10,7 @@ This project covers:
 - Overview of technical choices regarding Logstash.
 - Testing and Troubleshooting.
 - The Solution
+- Things to do
 
 ## Installation of ELK Stack on Bare Metal Kubernetes
 
@@ -25,7 +26,7 @@ For Logstash, I decided to break up the configuration files out of the main Logs
 
 This was an interesting challenge. When Logstash was started, and I checked Kibana to see if the logs were coming through after running the following command within the grok-chaos directory:
 
-cat test.txt | nc -u dev-kube-worker03.home.local 30142
+```cat test.txt | nc -u dev-kube-worker03.home.local 30142```
 
 I saw that the grok match function was not working. The logs were coming in but weren't getting parsed correctly. I then opened up Kibana's grok debugger and began building the match rule very carefully. I noticed that while the command looked correct, it was not matching whitespace. I went back to the original challenge doc and noticed that I thought there were some display errors as I used LibreOffice to open a .docx file, and some of the whitespaces had not displayed properly because of this. I realized this was probably impeding the filter. I used a sed command to clean up the nonstandard whitespaces and was then able to get the grok parser to match as intended.
 
@@ -35,9 +36,8 @@ After pondering on this for some time, I considered that perhaps, since the doc 
 ### The Solution
 
 The first thing I had to do was understand more about these white spaces. To do this, you can run the following and get this output:
-
+```
 od -An -c -t u1 test.txt
-
 
    <   1   4   >   1   	2   0   1   6   -   1   2   -   2   5
   60  49  52  62  49  32  50  48  49  54  45  49  50  45  50  53
@@ -61,16 +61,32 @@ od -An -c -t u1 test.txt
   49  57  52  46  49  52  50  34  32 115 101 118 101 114 105 116
    y   =   "   1   " 302 240  \n
  121  61  34  49  34 194 160  10
+```
 
 
 Using some ChatGPT4, I found that the "c2 a0" part was, in fact, the culprit. I then set out to remove this from the line before grok processed it. I suppose I could have figured out a way for grok to match said whitespace, but having mutate do this for me with all logs that came in seemed like the best, most robust option. I made this command to take out all kinds of nonstandard whitespaces:
 
 
+```
 mutate {
     # Replace non-standard whitespace characters with a standard space
     gsub => ["message", "[\\u00A0\\u1680\\u2000-\\u200A\\u202F\\u205F\\u3000]", " "]
 }
+```
 
 With that in place, and a little more tweaking, I was able to send both the cleaned-up and original logs in with the above netcat command and saw that Logstash was able to parse both properly, and it showed no errors, and all fields when viewed via Kibana.
 
 This was a fun experience, and I was able to learn a lot from it!
+
+## Things to do
+
+- Set up RBAC (Role-Based Access Control) for enhanced security and access management in Kubernetes.
+- Create network security policies to establish a zero-trust environment and restrict traffic flow between pods.
+- Install MetalLB on the cluster and configure it to provide a LoadBalancer service, eliminating the need for node port exposure.
+- Create an Ansible playbook to deploy and update Filebeat configurations on home Linux nodes for log collection.
+- Dive into Kibana to create and customize dashboards for monitoring and visualizing data from your home lab.
+- Implement log rotation and retention policies in Elasticsearch to manage storage and ensure efficient performance.
+- Explore the use of Elasticsearch index templates to optimize index settings and mappings for different types of logs.
+- Set up alerting in Kibana to notify me of specific events or anomalies in my home lab environment.
+- Document the setup and configuration process for future reference and ease of maintenance.
+
