@@ -1,0 +1,36 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana
+  namespace: elastic-system
+spec:
+  version: 8.12.2
+  count: 1
+  elasticsearchRef:
+    name: es-cluster
+  config:
+    server.publicBaseUrl: "http://[URL]:31001"
+  http:
+    service:
+      metadata:
+        annotations:
+          traefik.ingress.kubernetes.io/service.serversscheme: "http"
+    tls:
+      selfSignedCertificate:
+        disabled: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana-service
+  namespace: elastic-system
+spec:
+  selector:
+    common.k8s.elastic.co/type: kibana
+  ports:
+    - name: http
+      protocol: TCP
+      port: 5601
+      targetPort: 5601
+      nodePort: 31001
+  type: NodePort

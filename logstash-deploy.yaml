@@ -1,0 +1,78 @@
+apiVersion: logstash.k8s.elastic.co/v1alpha1
+kind: Logstash
+metadata:
+  name: logstash
+  namespace: elastic-system
+spec:
+  version: 8.12.2
+  count: 1
+  elasticsearchRefs:
+    - name: es-cluster
+      clusterName: es-cluster
+  config:
+    pipeline.workers: 4
+    log.level: debug
+  volumeClaimTemplates:
+    - metadata:
+        name: logstash-data
+      spec:
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 30Gi
+        storageClassName: nfs-client
+  podTemplate:
+    metadata:
+      labels:
+        app: logstash  # This must be here...
+    spec:
+      containers:
+        - name: logstash
+          volumeMounts:
+            - name: es-ca-cert
+              mountPath: "/usr/share/logstash/config/certs"
+              readOnly: true
+            - name: logstash-patterns
+              mountPath: "/usr/share/logstash/patterns"
+            - name: logstash-pipelines
+              mountPath: "/usr/share/logstash/pipeline"
+      volumes:
+        - name: es-ca-cert
+          secret:
+            secretName: es-ca-cert
+        - name: logstash-patterns
+          configMap:
+            name: logstash-patterns
+        - name: logstash-pipelines
+          configMap:
+            name: logstash-pipelines
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash-service
+  namespace: elastic-system
+spec:
+  selector:
+    app: logstash
+  ports:
+    - name: beats
+      protocol: TCP
+      port: 5044
+      targetPort: 5044
+      nodePort: 30044  # Specify the external node port for Beats input
+    - name: pfsense-syslog
+      protocol: UDP
+      port: 5141
+      targetPort: 5141
+      nodePort: 30141  # Specify the external node port for pfSense syslog input
+    - name: cyderes-syslog
+      protocol: UDP
+      port: 5142
+      targetPort: 5142
+      nodePort: 30142  # Specify the external node port for Cyderes syslog input
+  type: NodePort
+

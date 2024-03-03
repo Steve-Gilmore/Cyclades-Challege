@@ -1,0 +1,19 @@
+input {
+  # Use this for standard Linux logs from Kube nodes. Patterning will be done via filebeat on hosts configs standardized with ansible 
+  beats {
+    port => 5044
+  }
+
+  # pfSense firewall logs (assuming they are sent via syslog to Logstash)
+  udp {
+    port => 5141
+    type => "pfsense"
+  }
+
+  # Cyderes challenge logs
+  udp {
+    port => 5142
+    type => "cyderes"
+  }
+}
+

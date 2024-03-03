@@ -1,0 +1,2 @@
+cat cleantest.txt | nc -u dev-kube-worker03.home.local 30142
+cat test.txt | nc -u dev-kube-worker03.home.local 30142
