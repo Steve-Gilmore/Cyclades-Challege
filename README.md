@@ -89,4 +89,5 @@ This was a fun experience, and I was able to learn a lot from it!
 - Explore the use of Elasticsearch index templates to optimize index settings and mappings for different types of logs.
 - Set up alerting in Kibana to notify me of specific events or anomalies in my home lab environment.
 - Document the setup and configuration process for future reference and ease of maintenance.
+- Set up kustomize or Helm for control versioning and future upgrades. 
 
