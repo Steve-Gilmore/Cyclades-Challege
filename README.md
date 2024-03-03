@@ -38,6 +38,31 @@ The first thing I had to do was understand more about these white spaces. To do 
 
 od -An -c -t u1 test.txt
 
+
+   <   1   4   >   1   	2   0   1   6   -   1   2   -   2   5
+  60  49  52  62  49  32  50  48  49  54  45  49  50  45  50  53
+   T   0   9   :   0   3   :   5   2   .   7   5   4   6   4   6
+  84  48  57  58  48  51  58  53  50  46  55  53  52  54  52  54
+   -   0   6   :   0   0   	c   o   n   t   o   s   o   h   o
+  45  48  54  58  48  48  32  99 111 110 116 111 115 111 104 111
+   s   t   1   	a   n   t   i   v   i   r   u   s   	2   4
+ 115 116  49  32  97 110 116 105 118 105 114 117 115  32  50  52
+   9   6   	-   	- 302 240   a   l   e   r   t   n   a   m
+  57  54  32  45  32  45 194 160  97 108 101 114 116 110  97 109
+   e   =   "   V   i   r   u   s   	F   o   u   n   d   " 302
+ 101  61  34  86 105 114 117 115  32  70 111 117 110 100  34 194
+ 240   c   o   m   p   u   t   e   r   n   a   m   e   =   "   c
+ 160  99 111 109 112 117 116 101 114 110  97 109 101  61  34  99
+   o   n   t   o   s   o   p   c   4   2   " 302 240   c   o   m
+ 111 110 116 111 115 111 112  99  52  50  34 194 160  99 111 109
+   p   u   t   e   r   i   p   =   "   2   1   6   .   5   8   .
+ 112 117 116 101 114 105 112  61  34  50  49  54  46  53  56  46
+   1   9   4   .   1   4   2   "   	s   e   v   e   r   i   t
+  49  57  52  46  49  52  50  34  32 115 101 118 101 114 105 116
+   y   =   "   1   " 302 240  \n
+ 121  61  34  49  34 194 160  10
+
+
 Using some ChatGPT4, I found that the "c2 a0" part was, in fact, the culprit. I then set out to remove this from the line before grok processed it. I suppose I could have figured out a way for grok to match said whitespace, but having mutate do this for me with all logs that came in seemed like the best, most robust option. I made this command to take out all kinds of nonstandard whitespaces:
 
 
