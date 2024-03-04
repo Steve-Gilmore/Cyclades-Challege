@@ -64,7 +64,7 @@ od -An -c -t u1 test.txt
 ```
 
 
-Using some ChatGPT4, I found that the "c2 a0" part was, in fact, the culprit. I then set out to remove this from the line before grok processed it. I suppose I could have figured out a way for grok to match said whitespace, but having mutate do this for me with all logs that came in seemed like the best, most robust option. I made this command to take out all kinds of nonstandard whitespaces:
+Using some ChatGPT4, I found that the "194 160" part was, in fact, the culprit. I then set out to remove this from the line before grok processed it. I suppose I could have figured out a way for grok to match said whitespace, but having mutate do this for me with all logs that came in seemed like the best, most robust option. I made this command to take out all kinds of nonstandard whitespaces:
 
 
 ```
